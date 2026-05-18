@@ -24,7 +24,12 @@ import Fee from "./model/fee_model.js";
 import Notification from "./model/notification_model.js";
 import { errorMiddleware } from "./middleware/errorMiddleware.js";
 
-dotenv.config();
+if (process.env.NODE_ENV !== 'production') {
+  dotenv.config();
+} else {
+  dotenv.config({ path: '.env', override: false });
+}
+
 dns.setServers(['8.8.8.8', '8.8.4.4']);
 dbconnection();
 
@@ -138,7 +143,7 @@ cron.schedule('* * * * *', async () => {
 app.use(errorMiddleware);
 
 const PORT = process.env.PORT || 5001;
-const runningServer = server.listen(PORT, () => console.log(` Server + Socket.io running on port ${PORT}`));
+const runningServer = server.listen(PORT, "0.0.0.0", () => console.log(` Server + Socket.io running on port ${PORT}`));
 
 // Graceful shutdown
 process.on('SIGINT', () => {
